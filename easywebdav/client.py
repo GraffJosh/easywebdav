@@ -170,20 +170,20 @@ class Client(object):
     def delete(self, path):
         self._send("DELETE", path, 204)
 
-    def upload(self, local_path_or_fileobj, remote_path):
+    def upload(self, local_path_or_fileobj, remote_path, allow_redirects=False):
         if isinstance(local_path_or_fileobj, str):
             with open(local_path_or_fileobj, "rb") as f:
-                self._upload(f, remote_path)
+                self._upload(f, remote_path, allow_redirects=allow_redirects)
         else:
-            self._upload(local_path_or_fileobj, remote_path)
+            self._upload(local_path_or_fileobj, remote_path, allow_redirects=allow_redirects)
 
     def _upload(self, fileobj, remote_path, allow_redirects=False):
         self._send(
             "PUT", remote_path, (200, 201, 204), data=fileobj, allow_redirects=allow_redirects
         )
 
-    def download(self, remote_path, local_path_or_fileobj):
-        response = self._send("GET", remote_path, 200, stream=True)
+    def download(self, remote_path, local_path_or_fileobj, allow_redirects=False):
+        response = self._send("GET", remote_path, 200, stream=True, allow_redirects=allow_redirects)
         if isinstance(local_path_or_fileobj, str):
             with open(local_path_or_fileobj, "wb") as f:
                 self._download(f, response)
